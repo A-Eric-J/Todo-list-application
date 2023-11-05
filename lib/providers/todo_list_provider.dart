@@ -8,9 +8,4 @@ class TodoListProvider extends ChangeNotifier {
      notifyListeners();
   }
   List<TodoList> get todoLists => _todoLists;
-
-  void addTodoList(TodoList newTodoList){
-    _todoLists.add(newTodoList);
-    notifyListeners();
-  }
 }

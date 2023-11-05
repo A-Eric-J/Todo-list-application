@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list_application/const_values/route_paths.dart';
 import 'package:todo_list_application/enums/appbar_state.dart';
+import 'package:todo_list_application/models/todo_list.dart';
 import 'package:todo_list_application/ui/views/add_or_edit_todo_list.dart';
 import 'package:todo_list_application/ui/views/main_view.dart';
 
@@ -14,8 +15,8 @@ class Router {
       case RoutePaths.addOrEditTodoListPath:
         var arguments = settings.arguments as Map;
         AppBarState appbarState = arguments['appbarState'];
-        String? todoListText = arguments['todoListText'];
-        return MaterialPageRoute(builder: (_) =>  AddOrEditTodoList(appBar: appbarState,todoListText: todoListText,));
+        TodoList? todoList = arguments['todoList'];
+        return MaterialPageRoute(builder: (_) =>  AddOrEditTodoList(appBar: appbarState,todoList: todoList,));
 
       default:
         return MaterialPageRoute(

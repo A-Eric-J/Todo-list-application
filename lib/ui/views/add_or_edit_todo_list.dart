@@ -4,14 +4,15 @@ import 'package:todo_list_application/const_values/assets.dart';
 import 'package:todo_list_application/const_values/colors.dart';
 import 'package:todo_list_application/enums/appbar_state.dart';
 import 'package:todo_list_application/locator.dart';
+import 'package:todo_list_application/models/todo_list.dart';
 import 'package:todo_list_application/providers/todo_list_provider.dart';
 import 'package:todo_list_application/services/database/database.dart';
 import 'package:todo_list_application/services/navigation_service.dart';
 
 class AddOrEditTodoList extends StatefulWidget {
   final AppBarState appBar;
-  final String? todoListText;
-  const AddOrEditTodoList({Key? key, required this.appBar, this.todoListText}) : super(key: key);
+  final TodoList? todoList;
+  const AddOrEditTodoList({Key? key, required this.appBar,  this.todoList}) : super(key: key);
 
   @override
   State<AddOrEditTodoList> createState() => _AddOrEditTodoListState();
@@ -24,7 +25,7 @@ class _AddOrEditTodoListState extends State<AddOrEditTodoList> {
 
   @override
   void initState() {
-    textEditingController = TextEditingController(text: widget.todoListText ?? '');
+    textEditingController = TextEditingController(text: widget.todoList != null ? widget.todoList!.text : '');
     todoProvider = Provider.of<TodoListProvider>(context,listen: false);
     super.initState();
   }
@@ -52,19 +53,19 @@ class _AddOrEditTodoListState extends State<AddOrEditTodoList> {
         backgroundColor: brandMainColor,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
           children: [
-            Text(
-              widget.appBar == AppBarState.add ? 'Task Name' : 'Edit Task',
-              style: const TextStyle(
+            const Text(
+              'Task Name',
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w400,
                 color: black,
               ),
             ),
+            const SizedBox(height: 10,),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
@@ -79,40 +80,48 @@ class _AddOrEditTodoListState extends State<AddOrEditTodoList> {
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: InkWell(
-                highlightColor: transparent,
-                splashColor: transparent,
-                onTap: () async{
-                  todoListDatabase.insertTodoList(textEditingController!.text);
-                  var todoLists = await todoListDatabase.findAllTodoLists();
-                  todoProvider!.setTodoList(todoLists);
-                  locator<NavigationService>().goBackUntilTheFirstRoute();
-                },
-                child: Container(
-                  width: width,
-                  decoration: BoxDecoration(
-                    color: brandMainColor,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 18),
-                    child: Center(
-                      child: Text(
-                        'Done',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                          color: white,
-                          fontFamily: Assets.robotoRegular,
-                          shadows: <Shadow>[
-                            Shadow(
-                              offset: Offset(2, 2),
-                              blurRadius: 1.0,
-                              color: black,
-                            ),
-                          ],
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: InkWell(
+                  highlightColor: transparent,
+                  splashColor: transparent,
+                  onTap: () async{
+                    if(widget.appBar == AppBarState.add){
+                      await todoListDatabase.insertTodoList(textEditingController!.text);
+                    }
+                    else{
+                      await todoListDatabase.updateTodoCard(TodoList(id: widget.todoList!.id,text: textEditingController!.text,isChecked: widget.todoList!.isChecked));
+                    }
+                    var todoLists = await todoListDatabase.findAllTodoLists();
+                    todoProvider!.setTodoList(todoLists);
+                    locator<NavigationService>().goBack();
+                  },
+                  child: Container(
+                    height: 61,
+                    width: width,
+                    decoration: BoxDecoration(
+                      color: brandMainColor,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 18),
+                      child: Center(
+                        child: Text(
+                          'Done',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: white,
+                            fontFamily: Assets.robotoRegular,
+                            shadows: <Shadow>[
+                              Shadow(
+                                offset: Offset(2, 2),
+                                blurRadius: 1.0,
+                                color: black,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

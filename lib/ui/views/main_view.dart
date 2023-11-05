@@ -151,17 +151,20 @@ class _MainViewState extends State<MainView> {
                                Expanded(
                                  child: Align(
                                    alignment: Alignment.centerRight,
-                                   child: Container(
-                                     decoration: BoxDecoration(
-                                       borderRadius: BorderRadius.circular(6),
-                                       border: Border.all(
-                                         color: brandMainColor,
-                                         width: 1
-                                       )
-                                     ),
-                                     child: const Padding(
-                                       padding: EdgeInsets.all(10),
-                                       child: Text('Edit',style: TextStyle(fontSize: 16,color: blueFontColor_1,fontWeight: FontWeight.w500,fontFamily: Assets.robotoRegular,),),
+                                   child: InkWell(
+                                     onTap: ()=> locator<NavigationService>().navigateTo(RoutePaths.addOrEditTodoListPath,arguments: {'appbarState' : AppBarState.edit,'todoList' : todoListProvider.todoLists[index]}),
+                                     child: Container(
+                                       decoration: BoxDecoration(
+                                         borderRadius: BorderRadius.circular(6),
+                                         border: Border.all(
+                                           color: brandMainColor,
+                                           width: 1
+                                         )
+                                       ),
+                                       child: const Padding(
+                                         padding: EdgeInsets.all(10),
+                                         child: Text('Edit',style: TextStyle(fontSize: 16,color: blueFontColor_1,fontWeight: FontWeight.w500,fontFamily: Assets.robotoRegular,),),
+                                       ),
                                      ),
                                    ),
                                  ),
