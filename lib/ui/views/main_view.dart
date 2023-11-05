@@ -9,6 +9,8 @@ import 'package:todo_list_application/models/todo_list.dart';
 import 'package:todo_list_application/providers/todo_list_provider.dart';
 import 'package:todo_list_application/services/database/database.dart';
 import 'package:todo_list_application/services/navigation_service.dart';
+import 'package:todo_list_application/ui/widgets/no_ads_widget.dart';
+import 'package:todo_list_application/ui/widgets/profile_widget.dart';
 
 class MainView extends StatefulWidget {
   const MainView({Key? key}) : super(key: key);
@@ -46,88 +48,9 @@ class _MainViewState extends State<MainView> {
           builder: (context, todoListProvider ,child) {
             return Column(
               children: [
-                Container(
-                  color: brandMainColor,
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipOval(
-                        child: Image.asset(
-                          Assets.profile,
-                          width: 50.0,
-                          height: 50.0,
-                        ),
-                      ),
-                      const SizedBox(width: 14,),
-                      const Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Hello, Amirali',style: TextStyle(fontSize: 16,color: white,fontWeight: FontWeight.w500,fontFamily: Assets.robotoRegular),),
-                            Text('What are your plans for today?',style: TextStyle(fontSize: 25,color: white,fontWeight: FontWeight.w100,fontStyle: FontStyle.italic),),
-
-                          ],
-                        ),
-                      )
-
-                    ],
-                  ),
-                ),
-                Container(
-                  decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [lemon_1, lemon_2],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),),
-                  padding: const EdgeInsets.only(bottom: 30,right: 20,left: 20),
-                  child:
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 30),
-                          child: Row(
-                            children: [
-                              Image.asset(Assets.cup,width: 53,height: 41,),
-                              const SizedBox(width: 14,),
-                              const Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Go Pro (No Ads)',style: TextStyle(fontSize: 18,color: blueFontColor_1,fontWeight: FontWeight.w700,fontFamily: Assets.robotoRegular, shadows: <Shadow>[
-                                      Shadow(
-                                        offset: Offset(2, 2),
-                                        blurRadius: 1.0,
-                                        color: white,
-                                      ),
-                                    ],),),
-                                    SizedBox(height: 4,),
-                                    Text('No fuss, no ads, for only \$1 a month',style: TextStyle(fontSize: 12,color: blueFontColor_2,fontWeight: FontWeight.w400, shadows: <Shadow>[
-                                      Shadow(
-                                        offset: Offset(2, 2),
-                                        blurRadius: 1.0,
-                                        color: white,
-                                      ),
-                                    ],),),
-
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        color: darkBlue,
-                        height: 71,
-                        width: 66,
-                        child: const Center(child: Text('\$1',style: TextStyle(fontSize: 18,color: yellow,fontWeight: FontWeight.w500,fontFamily: Assets.robotoRegular,),)),
-                      )
-                    ],
-                  )
-                ),
+                const ProfileWidget(),
+                const NoAdsWidget(),
+                const SizedBox(height: 10,),
                 Expanded(
                   child: ListView.builder(
                     itemCount: todoListProvider.todoLists.length,
@@ -139,15 +62,25 @@ class _MainViewState extends State<MainView> {
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
                              children: [
-                               Checkbox(
-                                 value: todoListProvider.todoLists[index].isChecked,
-                                 onChanged: (bool? newValue) async{
-                                  await todoListDatabase.updateTodoCard(TodoList(id: todoListProvider.todoLists[index].id,text: todoListProvider.todoLists[index].text,isChecked: newValue));
-                                  var lists = await todoListDatabase.findAllTodoLists();
-                                  todoListProvider.setTodoList(lists);
-                                 },
+                               SizedBox(
+                                 width: 160,
+                                 height: 50,
+                                 child: CheckboxListTile(
+                                   contentPadding: const EdgeInsets.all(0),
+                                   value: todoListProvider.todoLists[index].isChecked,
+                                   onChanged: (bool? newValue) async{
+                                     await todoListDatabase.updateTodoCard(TodoList(id: todoListProvider.todoLists[index].id,text: todoListProvider.todoLists[index].text,isChecked: newValue));
+                                     var lists = await todoListDatabase.findAllTodoLists();
+                                     todoListProvider.setTodoList(lists);
+                                   },
+                                   controlAffinity: ListTileControlAffinity
+                                       .leading, //  <-- leading Checkbox
+                                   activeColor: green,
+                                   checkboxShape: RoundedRectangleBorder(
+                                       borderRadius: BorderRadius.circular(15)),
+                                 ),
                                ),
-                               Expanded(child: Text(todoListProvider.todoLists[index].text!,style: const TextStyle(fontSize: 16,color: blueFontColor_1,fontWeight: FontWeight.w500,fontFamily: Assets.robotoRegular,),)),
+                               Expanded(child: Text(todoListProvider.todoLists[index].text!,style:  TextStyle(fontSize: 16,color: todoListProvider.todoLists[index].isChecked ?? false ? checkedTextColor : blueFontColor_1,fontWeight: FontWeight.w500,fontFamily: Assets.robotoRegular,decoration: todoListProvider.todoLists[index].isChecked ?? false ? TextDecoration.lineThrough : TextDecoration.none),)),
                                Expanded(
                                  child: Align(
                                    alignment: Alignment.centerRight,

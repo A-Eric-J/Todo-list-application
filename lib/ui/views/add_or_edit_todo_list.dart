@@ -87,15 +87,27 @@ class _AddOrEditTodoListState extends State<AddOrEditTodoList> {
                   highlightColor: transparent,
                   splashColor: transparent,
                   onTap: () async{
-                    if(widget.appBar == AppBarState.add){
-                      await todoListDatabase.insertTodoList(textEditingController!.text);
+                    if(textEditingController!.text.isNotEmpty){
+                      if(widget.appBar == AppBarState.add){
+                        await todoListDatabase.insertTodoList(textEditingController!.text);
+                      }
+                      else{
+                        await todoListDatabase.updateTodoCard(TodoList(id: widget.todoList!.id,text: textEditingController!.text,isChecked: widget.todoList!.isChecked));
+                      }
+                      var todoLists = await todoListDatabase.findAllTodoLists();
+                      todoProvider!.setTodoList(todoLists);
+                      locator<NavigationService>().goBack();
                     }
                     else{
-                      await todoListDatabase.updateTodoCard(TodoList(id: widget.todoList!.id,text: textEditingController!.text,isChecked: widget.todoList!.isChecked));
-                    }
-                    var todoLists = await todoListDatabase.findAllTodoLists();
-                    todoProvider!.setTodoList(todoLists);
-                    locator<NavigationService>().goBack();
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                       const SnackBar(
+                          duration: Duration(milliseconds: 1500),
+                    content: Text(
+                    'Inset a text!'
+                    ),));
+
+                  }
                   },
                   child: Container(
                     height: 61,
