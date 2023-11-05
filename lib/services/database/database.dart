@@ -38,7 +38,7 @@ class TodoListDatabase {
 
   /// *** Insert
 
-  Future<int> insertTodoList(TodoList todoList) async {
+  Future<int> insertTodoList(String todoListText) async {
     final db = await database;
 
     /// getting the biggest id in the table
@@ -51,8 +51,8 @@ class TodoListDatabase {
         ' VALUES (?,?,?)',
         <dynamic>[
           id,
-          todoList.text,
-          todoList.isChecked,
+          todoListText,
+          false,
         ]);
     return raw;
   }
@@ -75,4 +75,16 @@ class TodoListDatabase {
   }
 
   /// *** Queries
+
+  Future<List<TodoList>> findAllTodoLists() async {
+    final db = await database;
+    var todoLists = <TodoList>[];
+    var res =
+    await db.query('TodoList');
+    if(res.isNotEmpty){
+      for (var todo in res) {
+        todoLists.add(TodoList.fromJson(todo));
+      }}
+    return todoLists;
+  }
 }

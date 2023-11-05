@@ -1,4 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_list_application/const_values/assets.dart';
+import 'package:todo_list_application/const_values/colors.dart';
+import 'package:todo_list_application/const_values/route_paths.dart';
+import 'package:todo_list_application/enums/appbar_state.dart';
+import 'package:todo_list_application/locator.dart';
+import 'package:todo_list_application/providers/todo_list_provider.dart';
+import 'package:todo_list_application/services/database/database.dart';
+import 'package:todo_list_application/services/navigation_service.dart';
 
 class MainView extends StatefulWidget {
   const MainView({Key? key}) : super(key: key);
@@ -8,12 +17,115 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
+  TodoListDatabase todoListDatabase = TodoListDatabase.db;
+  TodoListProvider? todoListProvider;
+
+  @override
+  void initState() {
+    todoListProvider = Provider.of(context,listen: false);
+
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async{
+      var todoLists = await todoListDatabase.findAllTodoLists();
+
+    });
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return  Scaffold(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: brandMainColor,
+        onPressed: () => locator<NavigationService>().navigateTo(RoutePaths.addOrEditTodoListPath,arguments: {'appbarState' : AppBarState.add}),
+        child: const Icon(Icons.add),
+      ),
       body: SafeArea(
-        child: Center(
-          child: Text('MainView'),
+        child: Column(
+          children: [
+            Container(
+              color: brandMainColor,
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipOval(
+                    child: Image.asset(
+                      Assets.profile,
+                      width: 50.0,
+                      height: 50.0,
+                    ),
+                  ),
+                  const SizedBox(width: 14,),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Hello, Amirali',style: TextStyle(fontSize: 16,color: white,fontWeight: FontWeight.w500,fontFamily: Assets.robotoRegular),),
+                        Text('What are your plans for today?',style: TextStyle(fontSize: 25,color: white,fontWeight: FontWeight.w100,fontStyle: FontStyle.italic),),
+
+                      ],
+                    ),
+                  )
+
+                ],
+              ),
+            ),
+            Container(
+              decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [lemon_1, lemon_2],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),),
+              padding: const EdgeInsets.only(bottom: 30,right: 20,left: 20),
+              child:
+              Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 30),
+                      child: Row(
+                        children: [
+                          Image.asset(Assets.cup,width: 53,height: 41,),
+                          const SizedBox(width: 14,),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Go Pro (No Ads)',style: TextStyle(fontSize: 18,color: blueFontColor_1,fontWeight: FontWeight.w700,fontFamily: Assets.robotoRegular, shadows: <Shadow>[
+                                  Shadow(
+                                    offset: Offset(2, 2),
+                                    blurRadius: 1.0,
+                                    color: white,
+                                  ),
+                                ],),),
+                                SizedBox(height: 4,),
+                                Text('No fuss, no ads, for only \$1 a month',style: TextStyle(fontSize: 12,color: blueFontColor_2,fontWeight: FontWeight.w400, shadows: <Shadow>[
+                                  Shadow(
+                                    offset: Offset(2, 2),
+                                    blurRadius: 1.0,
+                                    color: white,
+                                  ),
+                                ],),),
+
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    color: darkBlue,
+                    height: 71,
+                    width: 66,
+                    child: const Center(child: Text('\$1',style: TextStyle(fontSize: 18,color: yellow,fontWeight: FontWeight.w500,fontFamily: Assets.robotoRegular,),)),
+                  )
+                ],
+              )
+            )
+          ],
         ),
       ),
     );

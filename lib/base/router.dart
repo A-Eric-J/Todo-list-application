@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:todo_list_application/const_values/route_paths.dart';
+import 'package:todo_list_application/enums/appbar_state.dart';
+import 'package:todo_list_application/ui/views/add_or_edit_todo_list.dart';
 import 'package:todo_list_application/ui/views/main_view.dart';
 
 /// All the Routes for navigating are placed here
@@ -9,12 +11,11 @@ class Router {
     switch (settings.name) {
       case RoutePaths.mainViewPath:
         return MaterialPageRoute(builder: (_) => const MainView());
-
-      /// this commented code is for when we need to pass data to our destination path and
-      /// getting the data from settings.arguments
-      // case RoutePaths.testScreenPath:
-      //   var test = settings.arguments as TestModel;
-      //   return MaterialPageRoute(builder: (_) => TestScreen(test: test,));
+      case RoutePaths.addOrEditTodoListPath:
+        var arguments = settings.arguments as Map;
+        AppBarState appbarState = arguments['appbarState'];
+        String? todoListText = arguments['todoListText'];
+        return MaterialPageRoute(builder: (_) =>  AddOrEditTodoList(appBar: appbarState,todoListText: todoListText,));
 
       default:
         return MaterialPageRoute(

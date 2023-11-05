@@ -2,6 +2,8 @@
 class RoutePaths {
 
   static const mainViewPath = '/mainView';
-  /// add your another paths here
+  static const addOrEditTodoListPath = '/addOrEditTodoListPath';
+
+/// add your another paths here
 
 }
