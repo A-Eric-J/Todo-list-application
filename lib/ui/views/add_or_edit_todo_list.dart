@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_list_application/const_values/assets.dart';
 import 'package:todo_list_application/const_values/colors.dart';
 import 'package:todo_list_application/enums/appbar_state.dart';
+import 'package:todo_list_application/locator.dart';
+import 'package:todo_list_application/providers/todo_list_provider.dart';
 import 'package:todo_list_application/services/database/database.dart';
+import 'package:todo_list_application/services/navigation_service.dart';
 
 class AddOrEditTodoList extends StatefulWidget {
   final AppBarState appBar;
@@ -16,10 +20,12 @@ class AddOrEditTodoList extends StatefulWidget {
 class _AddOrEditTodoListState extends State<AddOrEditTodoList> {
   TextEditingController? textEditingController;
   TodoListDatabase todoListDatabase = TodoListDatabase.db;
+  TodoListProvider? todoProvider;
 
   @override
   void initState() {
     textEditingController = TextEditingController(text: widget.todoListText ?? '');
+    todoProvider = Provider.of<TodoListProvider>(context,listen: false);
     super.initState();
   }
   @override
@@ -78,8 +84,11 @@ class _AddOrEditTodoListState extends State<AddOrEditTodoList> {
               child: InkWell(
                 highlightColor: transparent,
                 splashColor: transparent,
-                onTap: (){
+                onTap: () async{
                   todoListDatabase.insertTodoList(textEditingController!.text);
+                  var todoLists = await todoListDatabase.findAllTodoLists();
+                  todoProvider!.setTodoList(todoLists);
+                  locator<NavigationService>().goBackUntilTheFirstRoute();
                 },
                 child: Container(
                   width: width,

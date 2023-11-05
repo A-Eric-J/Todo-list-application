@@ -47,7 +47,7 @@ class TodoListDatabase {
 
     /// inserting to the table using the new id
     var raw = await db.rawInsert(
-        'INSERT Into TodoList (id,guId,rssFeedLink)'
+        'INSERT Into TodoList (id,text,isChecked)'
         ' VALUES (?,?,?)',
         <dynamic>[
           id,
